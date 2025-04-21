@@ -56,3 +56,33 @@ def update_ticket(
             detail="Ticket not found"
         )
     return updated_ticket
+
+@router.post("/{ticket_id}/messages", response_model=MessageInDB, status_code=status.HTTP_201_CREATED)
+def create_message(
+    ticket_id: str,
+    message: MessageCreate,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user)
+):
+    message_service = MessageService(db)
+    return message_service.create_message(ticket_id, message, current_user)
+
+@router.get("/{ticket_id}/ai-response")
+async def get_ai_response(
+    ticket_id: str,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user)
+):
+    ticket_service = TicketService(db)
+    ticket = ticket_service.get_ticket(ticket_id, current_user)
+    if not ticket:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Ticket not found"
+        )
+    
+    async def event_stream():
+        # Implement your AI response streaming logic here
+        yield "data: AI response streaming not implemented yet\n\n"
+    
+    return EventSourceResponse(event_stream())

@@ -3,13 +3,12 @@ from sqlalchemy.orm import relationship
 from app.db.base import Base
 from enum import Enum as PyEnum
 
-class UserRole(str, PyEnum):
-    USER = "user"
-    ADMIN = "admin"
-
 class User(Base):
-    email = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
-    role = Column(Enum(UserRole), default=UserRole.USER, nullable=False)
+    __tablename__ = "users"
+    
+    id = Column(UUID, primary_key=True, default=uuid.uuid4)
+    email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
+    role = Column(String, default="user")
     
     tickets = relationship("Ticket", back_populates="user")
