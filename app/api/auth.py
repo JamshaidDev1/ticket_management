@@ -22,7 +22,8 @@ def signup(
     access_token_expires = timedelta(minutes=30)
     access_token = create_access_token(
         data={"sub": user.email},
-        expires_delta=access_token_expires
+        expires_delta=access_token_expires,
+        role=user.role.value
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -42,6 +43,7 @@ def login(
     access_token_expires = timedelta(minutes=30)
     access_token = create_access_token(
         data={"sub": user.email},
-        expires_delta=access_token_expires
+        expires_delta=access_token_expires,
+        role=user.role.value
     )
     return {"access_token": access_token, "token_type": "bearer"}
